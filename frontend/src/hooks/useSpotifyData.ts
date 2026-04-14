@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const API_URL = 'http://127.0.0.1:3333';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3333';
 
-// Configura axios para enviar cookies automaticamente
 const api = axios.create({
     baseURL: API_URL,
     withCredentials: true
@@ -55,8 +54,11 @@ export function useSpotifyData()
                     if (err.response?.status === 401) {
                         setError('Not authenticated. Please login.');
                         setIsAuthenticated(false);
+                    } else if (err.response?.status === 502) {
+                        setError('Failed to connect to Spotify. Please try again later.');
                     } else {
-                        setError(err.response?.data?.message || 'Failed to fetch data');
+                        const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Failed to fetch data';
+                        setError(errorMsg);
                     }
                 } else {
                     setError('An unexpected error occurred');
@@ -70,5 +72,17 @@ export function useSpotifyData()
         fetchData();
     }, []);
 
-    return { tracks, artists, loading, error, isAuthenticated };
+    const logout = async () => {
+        try {
+            await api.post('/auth/logout');
+            setIsAuthenticated(false);
+            setTracks([]);
+            setArtists([]);
+            setError(null);
+        } catch (err) {
+            console.error('Logout failed:', err);
+        }
+    };
+
+    return { tracks, artists, loading, error, isAuthenticated, logout };
 }

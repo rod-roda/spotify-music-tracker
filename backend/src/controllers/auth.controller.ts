@@ -71,3 +71,18 @@ export async function callbackController(
         return reply.status(500).send({ error: 'Authentication failed. Please try again.' });
     }
 }
+
+export async function logoutController(
+    req: FastifyRequest,
+    reply: FastifyReply
+)
+{
+    reply.clearCookie('user_id', {
+        path: '/',
+        httpOnly: true,
+        secure: IS_PROD,
+        sameSite: 'lax' as const
+    });
+
+    return reply.send({ message: 'Logged out successfully' });
+}
