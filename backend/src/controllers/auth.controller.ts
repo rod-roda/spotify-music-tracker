@@ -28,6 +28,7 @@ export async function loginController(req: FastifyRequest, reply: FastifyReply)
     
     reply.setCookie('oauth_state', state, {
         ...COOKIE_OPTIONS,
+        signed: true,
         maxAge: 60 * 10 // 10 minutos
     });
 
@@ -46,7 +47,8 @@ export async function callbackController(
         return reply.status(400).send({ error: 'Auth denied or missing code' });
     }
 
-    if (!validateCSRFState(state, req.cookies.oauth_state)) {
+    const savedState = req.unsignCookie(req.cookies.oauth_state ?? '');
+    if (!savedState.valid || !validateCSRFState(state, savedState.value ?? undefined)) {
         return reply.status(403).send({ error: 'Invalid state (CSRF protection)' });
     }
 
@@ -57,18 +59,9 @@ export async function callbackController(
         const profile = await getSpotifyProfile(tokens.access_token);
         const user = await upsertUser(profile, tokens);
 
-        reply.setCookie('spotify_access_token', tokens.access_token, {
-            ...COOKIE_OPTIONS,
-            maxAge: tokens.expires_in
-        });
-
-        reply.setCookie('spotify_refresh_token', tokens.refresh_token, {
-            ...COOKIE_OPTIONS,
-            maxAge: 60 * 60 * 24 * 30 // 30 dias
-        });
-
         reply.setCookie('user_id', user.id, {
             ...COOKIE_OPTIONS,
+            signed: true,
             maxAge: 60 * 60 * 24 * 30 // 30 dias
         });
 
