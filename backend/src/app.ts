@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import { authRoutes } from "./routes/auth.routes";
 import { spotifyRoutes } from "./routes/spotify.routes";
+import { analysisRoutes } from "./routes/analysis.routes";
 import { requireEnv } from "./config/env";
 import { errorHandler } from "./middlewares/error.middleware";
 
@@ -29,6 +30,7 @@ export function buildApp()
 
     app.register(authRoutes);
     app.register(spotifyRoutes);
+    app.register(analysisRoutes);
 
     app.get('/health', async () => {
         return {status: 'ok'}
