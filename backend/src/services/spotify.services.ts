@@ -82,24 +82,24 @@ export async function requestTokenRefresh(refreshToken: string): Promise<{ acces
     return RefreshTokenSchema.parse(response.data);
 }
 
-export async function getTopTracks(accessToken: string, limit: number = 10): Promise<TopTracks>
+export async function getTopTracks(accessToken: string, limit: number = 10, timeRange: string = 'medium_term'): Promise<TopTracks>
 {
     return spotifyApiRequest(async () => {
         const response = await axios.get('https://api.spotify.com/v1/me/top/tracks', {
             headers: { Authorization: `Bearer ${accessToken}` },
-            params: { limit, time_range: 'medium_term' }
+            params: { limit, time_range: timeRange }
         });
 
         return TopTracksSchema.parse(response.data.items);
     });
 }
 
-export async function getTopArtists(accessToken: string, limit: number = 5): Promise<TopArtists>
+export async function getTopArtists(accessToken: string, limit: number = 5, timeRange: string = 'medium_term'): Promise<TopArtists>
 {
     return spotifyApiRequest(async () => {
         const response = await axios.get('https://api.spotify.com/v1/me/top/artists', {
             headers: { Authorization: `Bearer ${accessToken}` },
-            params: { limit, time_range: 'medium_term' }
+            params: { limit, time_range: timeRange }
         });
 
         return TopArtistsSchema.parse(response.data.items);

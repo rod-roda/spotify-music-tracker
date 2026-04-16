@@ -17,9 +17,9 @@ interface EnrichedArtist {
     similarArtists: SimilarArtist[];
 }
 
-export async function getEnrichedTopArtists(accessToken: string, limit: number = 10): Promise<EnrichedArtist[]>
+export async function getEnrichedTopArtists(accessToken: string, limit: number = 10, timeRange: string = 'medium_term'): Promise<EnrichedArtist[]>
 {
-    const spotifyArtists = await getTopArtists(accessToken, limit);
+    const spotifyArtists = await getTopArtists(accessToken, limit, timeRange);
 
     const enriched = await Promise.allSettled(
         spotifyArtists.map(async (artist) => {

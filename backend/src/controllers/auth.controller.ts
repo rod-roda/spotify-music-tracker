@@ -6,6 +6,7 @@ import { SPOTIFY_REDIRECT_URI } from "../config/spotify";
 import { COOKIE_OPTIONS } from "../config/cookie";
 import DefaultError from "../errors/DefaultError";
 import BadRequest from "../errors/BadRequest";
+import type { CallbackQuery } from "../schemas/route.schemas";
 
 const FRONTEND_URL = requireEnv('FRONTEND_URL');
 
@@ -33,11 +34,12 @@ export async function loginController(req: FastifyRequest, reply: FastifyReply)
 }
 
 export async function callbackController(
-    req: FastifyRequest<{ Querystring: { code?: string; error?: string; state?: string } }>,
+    req: FastifyRequest,
     reply: FastifyReply
 ) 
 {
-    const { code, error, state } = req.query;
+    // JSON Schema valida em runtime, fazemos type assertion aqui
+    const { code, error, state } = req.query as CallbackQuery;
 
     if(error || !code) {
         throw new BadRequest('Auth denied or missing code');
