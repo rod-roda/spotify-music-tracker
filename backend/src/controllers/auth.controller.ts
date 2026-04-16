@@ -1,17 +1,13 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { getAuthUrl, generateCSRFState, validateCSRFState, exchangeCode, getSpotifyProfile, upsertUser } from "../services/auth.services";
-import { requireEnv } from "../lib/env";
+import { getAuthUrl, generateCSRFState, validateCSRFState, upsertUser } from "../services/auth.services";
+import { exchangeCode, getSpotifyProfile } from "../services/spotify.services";
+import { requireEnv } from "../config/env";
+import { SPOTIFY_REDIRECT_URI } from "../config/spotify";
+import { COOKIE_OPTIONS } from "../config/cookie";
+import DefaultError from "../errors/DefaultError";
+import BadRequest from "../errors/BadRequest";
 
-const SPOTIFY_REDIRECT_URI = requireEnv('SPOTIFY_REDIRECT_URI');
 const FRONTEND_URL = requireEnv('FRONTEND_URL');
-const IS_PROD = process.env.NODE_ENV === 'production';
-
-const COOKIE_OPTIONS = {
-    httpOnly: true,
-    secure: IS_PROD,
-    sameSite: 'lax' as const,
-    path: '/',
-};
 
 export async function loginController(req: FastifyRequest, reply: FastifyReply)
 {
@@ -44,32 +40,38 @@ export async function callbackController(
     const { code, error, state } = req.query;
 
     if(error || !code) {
-        return reply.status(400).send({ error: 'Auth denied or missing code' });
+        throw new BadRequest('Auth denied or missing code');
     }
 
     const savedState = req.unsignCookie(req.cookies.oauth_state ?? '');
     if (!savedState.valid || !validateCSRFState(state, savedState.value ?? undefined)) {
-        return reply.status(403).send({ error: 'Invalid state (CSRF protection)' });
+        throw new DefaultError('Invalid state (CSRF protection)', 403);
     }
 
     reply.clearCookie('oauth_state', { path: '/' });
 
-    try {
-        const tokens = await exchangeCode(code);
-        const profile = await getSpotifyProfile(tokens.access_token);
-        const user = await upsertUser(profile, tokens);
+    const tokens = await exchangeCode(code).catch((err) => {
+        req.log.error(err);
+        throw new DefaultError('Authentication failed. Please try again.');
+    });
 
-        reply.setCookie('user_id', user.id, {
-            ...COOKIE_OPTIONS,
-            signed: true,
-            maxAge: 60 * 60 * 24 * 30 // 30 dias
-        });
+    const profile = await getSpotifyProfile(tokens.access_token).catch((err) => {
+        req.log.error(err);
+        throw new DefaultError('Failed to fetch Spotify profile.');
+    });
 
-        reply.redirect(`${FRONTEND_URL}/callback`);
-    } catch (err) {
-        req.log.error(err, 'OAuth callback failed');
-        return reply.status(500).send({ error: 'Authentication failed. Please try again.' });
-    }
+    const user = await upsertUser(profile, tokens).catch((err) => {
+        req.log.error(err);
+        throw new DefaultError('Failed to save user session.');
+    });
+
+    reply.setCookie('user_id', user.id, {
+        ...COOKIE_OPTIONS,
+        signed: true,
+        maxAge: 60 * 60 * 24 * 30 // 30 dias
+    });
+
+    reply.redirect(`${FRONTEND_URL}/callback`);
 }
 
 export async function logoutController(
@@ -77,12 +79,7 @@ export async function logoutController(
     reply: FastifyReply
 )
 {
-    reply.clearCookie('user_id', {
-        path: '/',
-        httpOnly: true,
-        secure: IS_PROD,
-        sameSite: 'lax' as const
-    });
+    reply.clearCookie('user_id', COOKIE_OPTIONS);
 
     return reply.send({ message: 'Logged out successfully' });
 }

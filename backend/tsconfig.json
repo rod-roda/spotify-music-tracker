@@ -8,5 +8,5 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "prisma", "dist"]
+  "exclude": ["node_modules", "prisma", "dist", "prisma.config.ts"]
 }

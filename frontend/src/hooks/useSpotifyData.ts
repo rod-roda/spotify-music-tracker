@@ -23,7 +23,7 @@ interface Artist {
     id: string;
     name: string;
     genres?: string[];
-    images: Array<{ url: string }>;
+    image: string;
 }
 
 export function useSpotifyData()

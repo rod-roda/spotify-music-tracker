@@ -1,9 +1,10 @@
 import fastify from "fastify";
 import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
-import { authRoutes } from "./routes/auth.route";
+import { authRoutes } from "./routes/auth.routes";
 import { spotifyRoutes } from "./routes/spotify.routes";
-import { requireEnv } from "./lib/env";
+import { requireEnv } from "./config/env";
+import { errorHandler } from "./middlewares/error.middleware";
 
 declare module 'fastify' {
     interface FastifyRequest {
@@ -23,6 +24,9 @@ export function buildApp()
     });
 
     app.register(cookie, { secret: requireEnv('COOKIE_SECRET') });
+
+    app.setErrorHandler(errorHandler);
+
     app.register(authRoutes);
     app.register(spotifyRoutes);
 

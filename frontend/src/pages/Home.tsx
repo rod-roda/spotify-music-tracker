@@ -72,7 +72,7 @@ export function Home() {
         {artists.map((artist) => (
           <div key={artist.id} className={styles.artistCard}>
             <img 
-              src={artist.images[0]?.url} 
+              src={artist.image} 
               alt={artist.name}
               className={styles.artistImage} 
             />
