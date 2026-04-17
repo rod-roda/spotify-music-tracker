@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3333';
@@ -26,29 +26,79 @@ interface Artist {
     image: string;
 }
 
+interface Profile {
+    displayName: string;
+    avatarUrl: string | null;
+}
+
+type ListenerType =
+    | "mainstream"
+    | "alternativo"
+    | "explorador"
+    | "eclético"
+    | "nostálgico"
+    | "underground"
+    | "festeiro"
+    | "melancólico";
+
+interface Analysis {
+    stats: {
+        energy: number;
+        valence: number;
+        danceability: number;
+    };
+    persona: string;
+    analysis: {
+        main_genres: string[];
+        mood: string;
+        listener_type: ListenerType;
+        summary: string;
+    };
+}
+
 export function useSpotifyData()
 {
     const [tracks, setTracks] = useState<Track[]>([]);
     const [artists, setArtists] = useState<Artist[]>([]);
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [analysis, setAnalysis] = useState<Analysis | null>(null);
     const [loading, setLoading] = useState(true);
+    const [analysisLoading, setAnalysisLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const hasFetched = useRef(false);
 
     useEffect(() => {
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+
         async function fetchData()
         {
             try {
                 setLoading(true);
                 setError(null);
 
-                const [tracksRes, artistsRes] = await Promise.all([
+                const [tracksRes, artistsRes, profileRes] = await Promise.all([
                     api.get('/me/top-tracks'),
-                    api.get('/me/top-artists')
+                    api.get('/me/top-artists'),
+                    api.get('/me/profile'),
                 ]);
 
                 setTracks(tracksRes.data.tracks);
                 setArtists(artistsRes.data.artists);
+                setProfile(profileRes.data);
                 setIsAuthenticated(true);
+
+                // Fetch analysis separately (it's slower due to AI call)
+                setAnalysisLoading(true);
+                try {
+                    const analysisRes = await api.get('/me/analysis');
+                    setAnalysis(analysisRes.data.analysis);
+                } catch (err) {
+                    console.error('Error fetching analysis:', err);
+                } finally {
+                    setAnalysisLoading(false);
+                }
             } catch (err) {
                 if (axios.isAxiosError(err)) {
                     if (err.response?.status === 401) {
@@ -78,11 +128,13 @@ export function useSpotifyData()
             setIsAuthenticated(false);
             setTracks([]);
             setArtists([]);
+            setProfile(null);
+            setAnalysis(null);
             setError(null);
         } catch (err) {
             console.error('Logout failed:', err);
         }
     };
 
-    return { tracks, artists, loading, error, isAuthenticated, logout };
+    return { tracks, artists, profile, analysis, loading, analysisLoading, error, isAuthenticated, logout };
 }

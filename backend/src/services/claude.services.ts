@@ -29,7 +29,7 @@ RETORNE APENAS UM JSON válido (sem markdown, sem explicação) com exatamente e
   "analysis": {
     "main_genres": ["..."],
     "mood": "descrição curta do humor musical",
-    "listener_type": "ex: 'mainstream', 'alternativo', 'explorador', etc",
+    "listener_type": "(OBRIGATÓRIO: use EXATAMENTE um destes valores) 'mainstream' | 'alternativo' | 'explorador' | 'eclético' | 'nostálgico' | 'underground' | 'festeiro' | 'melancólico'",
     "summary": "resumo técnico curto do gosto musical"
   }
 }
@@ -47,7 +47,17 @@ Valence (humor):
 
 Danceability:
 - ritmos fortes e repetitivos → alto
-- músicas complexas ou lentas → baixo`;
+- músicas complexas ou lentas → baixo
+
+listener_type (escolha UM):
+- mainstream → ouve hits, artistas populares, charts
+- alternativo → prefere indie, sons fora do mainstream
+- explorador → sempre descobrindo gêneros e artistas novos
+- eclético → mistura muitos gêneros diferentes
+- nostálgico → gravita para clássicos e músicas de outras décadas
+- underground → busca artistas nichados e pouco conhecidos
+- festeiro → foco em festa, dança e energia alta
+- melancólico → atraído por música emotiva e introspectiva`;
 
 interface UserMusicData {
     artists: { name: string; genres: string[]; popularity: number }[];

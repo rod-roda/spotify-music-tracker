@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { getTopTracks } from "../services/spotify.services";
+import { getTopTracks, getSpotifyProfile } from "../services/spotify.services";
 import { getEnrichedTopArtists } from "../services/artist.services";
 import BadGateway from "../errors/BadGateway";
 import type { TopItemsQuery } from "../schemas/route.schemas";
@@ -34,4 +34,20 @@ export async function topArtistsController(
     });
 
     return reply.send({ artists });
+}
+
+export async function profileController(
+    req: FastifyRequest,
+    reply: FastifyReply
+)
+{
+    const profile = await getSpotifyProfile(req.spotifyToken!).catch((err) => {
+        req.log.error(err);
+        throw new BadGateway('Failed to fetch profile from Spotify');
+    });
+
+    return reply.send({
+        displayName: profile.display_name,
+        avatarUrl: profile.images?.[0]?.url ?? null,
+    });
 }
