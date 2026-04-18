@@ -16,6 +16,7 @@ REGRAS IMPORTANTES:
 - Não invente artistas ou dados externos
 - Seja consistente: os números devem refletir o texto
 - Os valores devem ser REALISTAS (baseados nos gêneros)
+- Retorne energy, valence e danceability como números inteiros entre 0 e 100 (sem casas decimais e sem símbolo de %)
 
 RETORNE APENAS UM JSON válido (sem markdown, sem explicação) com exatamente essa estrutura:
 

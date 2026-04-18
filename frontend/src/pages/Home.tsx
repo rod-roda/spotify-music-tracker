@@ -38,12 +38,6 @@ function getListenerColors(listenerType?: string) {
   return LISTENER_TYPE_COLORS[key] ?? LISTENER_TYPE_COLORS.default;
 }
 
-function getStatLabel(value: number) {
-  if (value >= 75) return 'Alto';
-  if (value >= 40) return 'Médio';
-  return 'Baixo';
-}
-
 export function Home() {
   const { artists, profile, analysis, loading, analysisLoading, error, isAuthenticated, logout } = useSpotifyData()
 
@@ -257,7 +251,7 @@ export function Home() {
                     <Zap size={16} className={styles.statIcon} />
                     Energy
                   </span>
-                  <span className={styles.statValue}>{getStatLabel(analysis.stats.energy)}</span>
+                  <span className={styles.statValue}>{Math.round(analysis.stats.energy)}%</span>
                 </div>
                 <div className={styles.statBar}>
                   <div
@@ -272,7 +266,7 @@ export function Home() {
                     <Smile size={16} className={styles.statIcon} />
                     Valence
                   </span>
-                  <span className={styles.statValue}>{getStatLabel(analysis.stats.valence)}</span>
+                  <span className={styles.statValue}>{Math.round(analysis.stats.valence)}%</span>
                 </div>
                 <div className={styles.statBar}>
                   <div
@@ -287,7 +281,7 @@ export function Home() {
                     <Music size={16} className={styles.statIcon} />
                     Danceability
                   </span>
-                  <span className={styles.statValue}>{getStatLabel(analysis.stats.danceability)}</span>
+                  <span className={styles.statValue}>{Math.round(analysis.stats.danceability)}%</span>
                 </div>
                 <div className={styles.statBar}>
                   <div
