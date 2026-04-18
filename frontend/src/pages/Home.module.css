@@ -25,9 +25,9 @@
   height: 200%;
   background: 
     radial-gradient(ellipse 600px 400px at 20% 30%, var(--accent-color, #818cf8) 0%, transparent 70%),
-    radial-gradient(ellipse 500px 350px at 70% 60%, color-mix(in srgb, var(--accent-color, #818cf8) 60%, #e94560) 0%, transparent 70%),
-    radial-gradient(ellipse 400px 500px at 50% 80%, color-mix(in srgb, var(--accent-color, #818cf8) 40%, #4ecdc4) 0%, transparent 70%);
-  opacity: 0.25;
+    radial-gradient(ellipse 500px 350px at 70% 60%, var(--accent-color-2, #c084fc) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 500px at 50% 80%, color-mix(in srgb, var(--accent-color, #818cf8) 50%, var(--accent-color-2, #c084fc)) 0%, transparent 70%);
+  opacity: 0.4;
   animation: bgWave 12s ease-in-out infinite alternate;
   z-index: 0;
   pointer-events: none;
@@ -64,7 +64,7 @@
   height: 100%;
   object-fit: cover;
   object-position: top;
-  opacity: 0.35;
+  opacity: 0.70;
   mask-image: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
   animation: fadeInBg 1.2s ease both;
@@ -112,7 +112,7 @@
   transform: scale(1.15) translateX(6px);
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
-  box-shadow: 0 0 14px rgba(129, 140, 248, 0.4);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-color, #818cf8) 40%, transparent);
   border-color: var(--accent-color, #818cf8);
 }
 
@@ -131,7 +131,7 @@
   }
   50% {
     border-color: var(--accent-color, #818cf8);
-    box-shadow: 0 0 8px rgba(129, 140, 248, 0.3);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color, #818cf8) 30%, transparent);
   }
 }
 
@@ -166,7 +166,7 @@
 .avatar:hover {
   transform: scale(1.15);
   border-color: var(--accent-color, #818cf8);
-  box-shadow: 0 0 20px rgba(129, 140, 248, 0.35);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent-color, #818cf8) 35%, transparent);
 }
 
 .username {
@@ -567,19 +567,87 @@
 
 /* ===== Login / Loading / Error states ===== */
 .loginContainer {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  gap: 1.5rem;
-  background: #111827;
+  width: 100vw;
+  background: #16141e;
   color: #e5e7eb;
+  overflow: hidden;
+  font-family: 'Sora', system-ui, -apple-system, sans-serif;
 }
 
-.loginContainer h1 {
+.loginGlow {
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(ellipse 500px 400px at 30% 40%, #818cf8 0%, transparent 70%),
+    radial-gradient(ellipse 400px 350px at 70% 60%, #c084fc 0%, transparent 70%);
+  opacity: 0.25;
+  animation: bgWave 12s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.loginContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  animation: fadeUp 0.8s ease both;
+}
+
+.loginEqBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 40px;
+  margin-bottom: 0.5rem;
+}
+
+.loginEqBar {
+  width: 5px;
+  border-radius: 3px 3px 0 0;
+  background: #818cf8;
+  min-height: 4px;
+  opacity: 0.6;
+  animation: eqBounce var(--dur, 0.8s) ease-in-out infinite alternate;
+  animation-delay: var(--delay, 0s);
+}
+
+.loginTitle {
+  font-size: 2.4rem;
+  font-weight: 700;
   color: #fff;
-  font-size: 2rem;
+  margin: 0;
+  letter-spacing: -1px;
+  animation: fadeUp 0.6s ease 0.2s both;
+}
+
+.loginSubtitle {
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  letter-spacing: 0.3px;
+  animation: fadeUp 0.6s ease 0.35s both;
+}
+
+.loginBrand {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.12);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  z-index: 1;
 }
 
 .loadingContainer {
@@ -588,26 +656,135 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  gap: 1.5rem;
+  gap: 2rem;
   background: #111827;
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.95rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #6366f1;
+/* glow de fundo atrás das barras */
+.loadingContainer::before {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(99, 102, 241, 0.12) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.eqLoadingBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 140px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.eqLoadingBar {
+  width: 8px;
+  border-radius: 4px 4px 0 0;
+  background: #6366f1;
+  min-height: 4px;
+  animation: eqBounce var(--dur) ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+}
+
+.eqLoadingMsg {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+  animation: textPulse 2s ease-in-out infinite;
+  letter-spacing: 0.3px;
+}
+
+@keyframes textPulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.85; }
+}
+
+.eqDots {
+  display: flex;
+  gap: 6px;
+}
+
+.eqDots span {
+  color: #6366f1;
+  font-size: 20px;
+  font-weight: 600;
+  animation: dotBlink 1.2s ease-in-out infinite;
+}
+
+.eqDots span:nth-child(2) { animation-delay: 0.2s; }
+.eqDots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBlink {
+  0%, 100% { opacity: 0.2; transform: translateY(0); }
+  50%       { opacity: 1;   transform: translateY(-5px); }
+}
+
+.eqBrand {
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.15);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+  animation: fadeUp 1s ease 0.3s both;
 }
 
 /* ===== Shared animations ===== */
+
+/* ===== Loading → Card transition ===== */
+.loadingExit {
+  animation: loadingFadeOut 1s ease-out forwards;
+}
+
+.loadingExit .eqLoadingBars,
+.loadingExit .eqLoadingMsg,
+.loadingExit .eqDots,
+.loadingExit .eqBrand {
+  animation: loadingElementFade 0.8s ease-out forwards;
+}
+
+.loadingExit .eqLoadingMsg {
+  animation-delay: 0.05s;
+}
+
+.loadingExit .eqDots {
+  animation-delay: 0.1s;
+}
+
+.loadingExit .eqBrand {
+  animation-delay: 0.15s;
+}
+
+@keyframes loadingFadeOut {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes loadingElementFade {
+  0%   { opacity: 1; filter: blur(0); }
+  100% { opacity: 0; filter: blur(4px); }
+}
+
+.cardReveal::before {
+  animation: bgGradientReveal 1.5s ease-out forwards;
+}
+
+@keyframes bgGradientReveal {
+  0%   { opacity: 0; }
+  40%  { opacity: 0.1; }
+  100% { opacity: 0.4; }
+}
+
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -658,20 +835,41 @@
 }
 
 .loginButton {
-  background-color: #1DB954;
-  color: white;
-  border: none;
-  padding: 0.8rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.9rem 2.2rem;
   border-radius: 99px;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: 'Sora', system-ui, sans-serif;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 0.2s;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  animation: fadeUp 0.6s ease 0.5s both;
+  margin-top: 0.5rem;
 }
 
 .loginButton:hover {
-  background-color: #17a349;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #818cf8;
+  box-shadow: 0 0 24px rgba(129, 140, 248, 0.25);
+  transform: translateY(-2px);
+}
+
+.loginButton:active {
+  transform: translateY(0);
+}
+
+.spotifyIcon {
+  width: 20px;
+  height: 20px;
+  color: #1DB954;
+  flex-shrink: 0;
 }
 
 /* ===== Responsive ===== */

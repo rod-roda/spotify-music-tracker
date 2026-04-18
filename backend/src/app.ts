@@ -9,7 +9,8 @@ import { errorHandler } from "./middlewares/error.middleware";
 
 declare module 'fastify' {
     interface FastifyRequest {
-        spotifyToken?: string;
+        spotifyToken?: string,
+        userId?: string;
     }
 }
 
@@ -18,6 +19,7 @@ export function buildApp()
     const app = fastify({logger: true});
 
     app.decorateRequest('spotifyToken', undefined);
+    app.decorateRequest('userId', undefined);
 
     app.register(cors, {
         origin: [requireEnv('FRONTEND_URL'), requireEnv('FRONTEND_URL').replace('localhost', '127.0.0.1')],

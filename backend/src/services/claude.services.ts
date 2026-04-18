@@ -25,7 +25,7 @@ RETORNE APENAS UM JSON válido (sem markdown, sem explicação) com exatamente e
     "valence": number (0 a 100),
     "danceability": number (0 a 100)
   },
-  "persona": "texto curto (2-3 frases), criativo, moderno e levemente irônico, estilo Spotify Wrapped",
+  "persona": "texto curto (2-3 frases) escrito como se um amigo estivesse te zuando carinhosamente pelo seu gosto musical. Tom irônico e bem-humorado, linguagem informal e direta — como uma legenda de story, não um relatório. Exemplos de estilo: 'Você ouve Arctic Monkeys a tarde toda e chama isso de produtividade.' / 'Basicamente você é o cara que coloca uma playlist lo-fi e acha que tá meditando.' / 'Seu gosto musical tem mais camadas do que sua planilha de metas de ano novo.' Use os gêneros e o mood real do usuário pra escrever algo específico, não genérico, estilo Spotify Wrapped.",
   "analysis": {
     "main_genres": ["..."],
     "mood": "descrição curta do humor musical",

@@ -2,12 +2,22 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { getTopTracks } from "../services/spotify.services";
 import { getEnrichedTopArtists } from "../services/artist.services";
 import { analyzeMusicalProfile } from "../services/claude.services";
+import { redis } from "../config/redis";
 import BadGateway from "../errors/BadGateway";
+
+const ANALYSIS_TTL = 60 * 60 * 24;
 
 export async function analysisController(
     req: FastifyRequest,
     reply: FastifyReply
 ) {
+    const cacheKey = `analysis:${req.userId}`;
+    
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+        return reply.send({ analysis: JSON.parse(cached) });
+    }
+    
     const [tracks, artists] = await Promise.all([
         getTopTracks(req.spotifyToken!, 20),
         getEnrichedTopArtists(req.spotifyToken!, 15),
@@ -33,5 +43,6 @@ export async function analysisController(
         throw new BadGateway("Failed to generate musical analysis");
     });
 
+    await redis.set(cacheKey, JSON.stringify(analysis), "EX", ANALYSIS_TTL);
     return reply.send({ analysis });
 }

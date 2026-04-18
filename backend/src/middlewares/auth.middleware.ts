@@ -16,5 +16,6 @@ export async function requireSpotifyAuth(
         throw new DefaultError('Session expired. Please login again.', 401);
     });
 
+    req.userId = cookie.value;
     req.spotifyToken = accessToken;
 }
