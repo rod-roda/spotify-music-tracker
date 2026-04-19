@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { getAuthUrl, generateCSRFState, saveCSRFState, consumeCSRFState, upsertUser } from "../services/auth.services";
+import { getAuthUrl, generateCSRFState, saveCSRFState, consumeCSRFState, upsertUser, saveAuthToken, consumeAuthToken } from "../services/auth.services";
 import { exchangeCode, getSpotifyProfile } from "../services/spotify.services";
 import { requireEnv } from "../config/env";
 import { COOKIE_OPTIONS } from "../config/cookie";
@@ -49,13 +49,30 @@ export async function callbackController(
         throw new DefaultError('Failed to save user session.');
     });
 
-    reply.setCookie('user_id', user.id, {
+    const token = await saveAuthToken(user.id);
+
+    reply.redirect(`${FRONTEND_URL}/callback?token=${token}`);
+}
+
+export async function sessionController(
+    req: FastifyRequest<{ Querystring: { token?: string } }>,
+    reply: FastifyReply
+)
+{
+    const { token } = req.query;
+    const userId = await consumeAuthToken(token);
+
+    if (!userId) {
+        throw new DefaultError('Invalid or expired token', 401);
+    }
+
+    reply.setCookie('user_id', userId, {
         ...COOKIE_OPTIONS,
         signed: true,
         maxAge: 60 * 60 * 24 * 30 // 30 dias
     });
 
-    reply.redirect(FRONTEND_URL);
+    return reply.send({ ok: true });
 }
 
 export async function logoutController(

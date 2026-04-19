@@ -11,6 +11,10 @@
     {
       "source": "/health",
       "destination": "https://spotify-music-tracker-production.up.railway.app/health"
+    },
+    {
+      "source": "/callback",
+      "destination": "/index.html"
     }
   ]
 }

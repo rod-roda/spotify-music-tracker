@@ -9,6 +9,8 @@ import { redis } from "../config/redis";
 
 const STATE_TTL = 600; // 10 minutos
 const STATE_PREFIX = 'oauth:state:';
+const AUTH_TOKEN_TTL = 60; // 1 minuto
+const AUTH_TOKEN_PREFIX = 'oauth:token:';
 
 export function getAuthUrl(state: string): string
 {
@@ -39,6 +41,23 @@ export async function consumeCSRFState(state?: string): Promise<boolean>
     const key = `${STATE_PREFIX}${state}`;
     const deleted = await redis.del(key);
     return deleted === 1;
+}
+
+export async function saveAuthToken(userId: string): Promise<string>
+{
+    const token = randomBytes(32).toString('hex');
+    await redis.set(`${AUTH_TOKEN_PREFIX}${token}`, userId, 'EX', AUTH_TOKEN_TTL);
+    return token;
+}
+
+export async function consumeAuthToken(token?: string): Promise<string | null>
+{
+    if (!token) return null;
+    const key = `${AUTH_TOKEN_PREFIX}${token}`;
+    const userId = await redis.get(key);
+    if (!userId) return null;
+    await redis.del(key);
+    return userId;
 }
 
 export async function getValidAccessToken(userId: string): Promise<string>
