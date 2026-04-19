@@ -5,6 +5,10 @@ import { findUserById, updateUser, upsertUserBySpotifyId } from "../repositories
 import { requestTokenRefresh } from "./spotify.services";
 import type { SpotifyProfile, SpotifyTokenResponse, RefreshTokenResponse } from "../schemas/spotify.schema";
 import { encrypt, decrypt } from "../utils/crypto";
+import { redis } from "../config/redis";
+
+const STATE_TTL = 600; // 10 minutos
+const STATE_PREFIX = 'oauth:state:';
 
 export function getAuthUrl(state: string): string
 {
@@ -24,14 +28,17 @@ export function generateCSRFState(): string
     return randomBytes(16).toString('hex');
 }
 
-export function validateCSRFState(state?: string, savedState?: string): boolean
+export async function saveCSRFState(state: string): Promise<void>
 {
-    if (!state || !savedState || state.length !== savedState.length) return false;
+    await redis.set(`${STATE_PREFIX}${state}`, '1', 'EX', STATE_TTL);
+}
 
-    return timingSafeEqual(
-        Buffer.from(state, 'utf8'),
-        Buffer.from(savedState, 'utf8')
-    );
+export async function consumeCSRFState(state?: string): Promise<boolean>
+{
+    if (!state) return false;
+    const key = `${STATE_PREFIX}${state}`;
+    const deleted = await redis.del(key);
+    return deleted === 1;
 }
 
 export async function getValidAccessToken(userId: string): Promise<string>
