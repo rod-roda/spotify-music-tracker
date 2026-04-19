@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/auth/:path*",
+      "destination": "https://spotify-music-tracker-production.up.railway.app/auth/:path*"
+    },
+    {
+      "source": "/me/:path*",
+      "destination": "https://spotify-music-tracker-production.up.railway.app/me/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://spotify-music-tracker-production.up.railway.app/health"
+    }
+  ]
+}

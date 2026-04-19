@@ -3,7 +3,7 @@ import { Zap, Smile, Music } from 'lucide-react'
 import styles from './Home.module.css'
 import { useSpotifyData } from '../hooks/useSpotifyData'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3333';
+const API_URL = import.meta.env.VITE_API_URL ?? '';
 
 const EQ_BARS = 200;
 const eqConfig = Array.from({ length: EQ_BARS }, (_, i) => ({
