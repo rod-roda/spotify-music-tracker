@@ -5,6 +5,7 @@ export const callbackQuerySchema = {
         error: { type: 'string' },
         state: { type: 'string' },
     },
+    required: ['state']
 } as const;
 
 export const topItemsQuerySchema = {
@@ -22,7 +23,7 @@ export const topItemsQuerySchema = {
 export interface CallbackQuery {
     code?: string;
     error?: string;
-    state?: string;
+    state: string;
 }
 
 export interface TopItemsQuery {

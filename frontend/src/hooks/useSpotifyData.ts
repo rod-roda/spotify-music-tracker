@@ -124,7 +124,7 @@ export function useSpotifyData()
 
     const logout = async () => {
         try {
-            await api.post('/auth/logout');
+            await api.get('/auth/logout');
             setIsAuthenticated(false);
             setTracks([]);
             setArtists([]);

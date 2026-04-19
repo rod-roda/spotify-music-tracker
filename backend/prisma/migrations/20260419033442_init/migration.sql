@@ -1,14 +1,17 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "spotifyId" TEXT NOT NULL,
     "displayName" TEXT NOT NULL,
     "email" TEXT,
     "avatarUrl" TEXT,
     "accessToken" TEXT NOT NULL,
     "refreshToken" TEXT NOT NULL,
-    "tokenExpiresAt" DATETIME NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "tokenExpiresAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

@@ -15,6 +15,7 @@ export const SpotifyProfileSchema = z.object({
 
 export const RefreshTokenSchema = z.object({
     access_token: z.string(),
+    refresh_token: z.string().optional(),
     expires_in: z.number(),
 });
 
@@ -32,6 +33,7 @@ export const TopArtistsSchema = z.array(z.object({
 }));
 
 export type SpotifyTokenResponse = z.infer<typeof SpotifyTokenSchema>;
+export type RefreshTokenResponse = z.infer<typeof RefreshTokenSchema>;
 export type SpotifyProfile = z.infer<typeof SpotifyProfileSchema>;
 export type TopTracks = z.infer<typeof TopTracksSchema>;
 export type TopArtists = z.infer<typeof TopArtistsSchema>;

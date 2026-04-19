@@ -4,6 +4,7 @@ import { getEnrichedTopArtists } from "../services/artist.services";
 import { analyzeMusicalProfile } from "../services/claude.services";
 import { redis } from "../config/redis";
 import BadGateway from "../errors/BadGateway";
+import Unauthorized from "../errors/Unauthorized";
 
 const ANALYSIS_TTL = 60 * 60 * 24;
 
@@ -11,6 +12,10 @@ export async function analysisController(
     req: FastifyRequest,
     reply: FastifyReply
 ) {
+    if(!req.spotifyToken || !req.userId) {
+        throw new Unauthorized();
+    }
+
     const cacheKey = `analysis:${req.userId}`;
     
     const cached = await redis.get(cacheKey);
@@ -19,8 +24,8 @@ export async function analysisController(
     }
     
     const [tracks, artists] = await Promise.all([
-        getTopTracks(req.spotifyToken!, 20),
-        getEnrichedTopArtists(req.spotifyToken!, 15),
+        getTopTracks(req.spotifyToken, 20),
+        getEnrichedTopArtists(req.spotifyToken, 15),
     ]).catch((err) => {
         req.log.error(err);
         throw new BadGateway("Failed to fetch data from Spotify");
@@ -44,5 +49,5 @@ export async function analysisController(
     });
 
     await redis.set(cacheKey, JSON.stringify(analysis), "EX", ANALYSIS_TTL);
-    return reply.send({ analysis });
+    return reply.send({ analysis });    
 }

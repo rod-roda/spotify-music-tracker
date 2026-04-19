@@ -6,5 +6,5 @@ export async function authRoutes(app: FastifyInstance)
 {
     app.get('/auth/login', loginController);
     app.get('/auth/callback', { schema: { querystring: callbackQuerySchema } }, callbackController);
-    app.post('/auth/logout', logoutController);
+    app.get('/auth/logout', logoutController);
 }

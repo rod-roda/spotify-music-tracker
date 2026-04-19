@@ -3,7 +3,7 @@ import { User } from "@prisma/client";
 import { SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI, SPOTIFY_SCOPES } from "../config/spotify";
 import { findUserById, updateUser, upsertUserBySpotifyId } from "../repositories/user.repository";
 import { requestTokenRefresh } from "./spotify.services";
-import type { SpotifyProfile, SpotifyTokenResponse } from "../schemas/spotify.schema";
+import type { SpotifyProfile, SpotifyTokenResponse, RefreshTokenResponse } from "../schemas/spotify.schema";
 import { encrypt, decrypt } from "../utils/crypto";
 
 export function getAuthUrl(state: string): string
@@ -57,6 +57,9 @@ async function refreshAccessToken(user: User): Promise<string>
     await updateUser(user.id, {
         accessToken: encrypt(tokens.access_token),
         tokenExpiresAt,
+        ...(tokens.refresh_token && {
+            refreshToken: encrypt(tokens.refresh_token)
+        })
     });
 
     return tokens.access_token;
