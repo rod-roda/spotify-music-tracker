@@ -20,7 +20,7 @@ declare module 'fastify' {
 
 export function buildApp()
 {
-    const IS_PROD = process.env.NODE_ENV === 'production';
+    const IS_PROD = process.env.NODE_ENV?.toLowerCase() === 'production';
 
     const loggerConfig = IS_PROD
         ? { level: 'info' as const, redact: ['req.headers.cookie', 'req.headers.authorization'] }
