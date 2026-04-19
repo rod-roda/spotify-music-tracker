@@ -73,7 +73,7 @@ export async function callbackController(
         maxAge: 60 * 60 * 24 * 30 // 30 dias
     });
 
-    reply.redirect(`${FRONTEND_URL}/auth/callback`);
+    reply.redirect(FRONTEND_URL);
 }
 
 export async function logoutController(
