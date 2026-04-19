@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { getAuthUrl, generateCSRFState, validateCSRFState, upsertUser } from "../services/auth.services";
 import { exchangeCode, getSpotifyProfile } from "../services/spotify.services";
 import { requireEnv } from "../config/env";
-import { SPOTIFY_REDIRECT_URI } from "../config/spotify";
+//import { SPOTIFY_REDIRECT_URI } from "../config/spotify";
 import { COOKIE_OPTIONS } from "../config/cookie";
 import DefaultError from "../errors/DefaultError";
 import BadRequest from "../errors/BadRequest";
@@ -14,12 +14,12 @@ export async function loginController(req: FastifyRequest, reply: FastifyReply)
 {
     // Garante que o cookie será setado no mesmo domínio do callback
     // (Spotify exige 127.0.0.1, não aceita localhost)
-    const callbackUrl = new URL(SPOTIFY_REDIRECT_URI);
-    const currentHostname = req.hostname; // Fastify retorna sem porta
+    // const callbackUrl = new URL(SPOTIFY_REDIRECT_URI);
+    // const currentHostname = req.hostname; // Fastify retorna sem porta
 
-    if (currentHostname !== callbackUrl.hostname) {
-        return reply.redirect(`${callbackUrl.origin}/auth/login`);
-    }
+    // if (currentHostname !== callbackUrl.hostname) {
+    //     return reply.redirect(`${callbackUrl.origin}/auth/login`);
+    // }
 
     const state = generateCSRFState();
     
