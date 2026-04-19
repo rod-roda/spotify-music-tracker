@@ -663,3 +663,12 @@ model User {
 **Consequences:**
 - Requests may take longer under rate limiting, but the 60-second `requestTimeout` on Fastify caps total wait time
 - The `Promise.allSettled` pattern in `artist.services.ts` ensures partial results are still returned if some Last.fm enrichments fail
+
+---
+
+## TODO
+
+- [ ] Add unit tests (crypto, popularity, CSRF, services, middleware)
+- [ ] Review and improve backend error handling
+- [ ] Review and improve frontend error display for end users
+- [ ] Submit Spotify quota extension request (video demo required) to make login available to all users beyond development mode
