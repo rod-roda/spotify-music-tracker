@@ -8,5 +8,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "prisma", "dist", "prisma.config.ts"]
+  "exclude": [
+    "node_modules",
+    "prisma",
+    "dist",
+    "prisma.config.ts",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts"
+  ]
 }
