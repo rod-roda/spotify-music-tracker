@@ -101,17 +101,15 @@ export function useSpotifyData()
                 }
             } catch (err) {
                 if (axios.isAxiosError(err)) {
+                    const errorMsg = err.response?.data?.error || err.response?.data?.message;
                     if (err.response?.status === 401) {
-                        setError('Not authenticated. Please login.');
                         setIsAuthenticated(false);
-                    } else if (err.response?.status === 502) {
-                        setError('Failed to connect to Spotify. Please try again later.');
+                        setError(errorMsg || 'Não autenticado. Por favor, faça login.');
                     } else {
-                        const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Failed to fetch data';
-                        setError(errorMsg);
+                        setError(errorMsg || 'Falha ao buscar dados');
                     }
                 } else {
-                    setError('An unexpected error occurred');
+                    setError('Ocorreu um erro inesperado');
                 }
                 console.error('Error fetching Spotify data:', err);
             } finally {

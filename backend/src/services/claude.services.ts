@@ -82,7 +82,7 @@ export async function analyzeMusicalProfile(data: UserMusicData): Promise<Analys
 
     const textBlock = message.content.find((block) => block.type === "text");
     if (!textBlock || textBlock.type !== "text") {
-        throw new Error("Claude did not return a text response");
+        throw new Error("Claude não retornou uma resposta em texto");
     }
 
     const parsed = JSON.parse(textBlock.text);

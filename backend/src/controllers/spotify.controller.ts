@@ -19,7 +19,7 @@ export async function topTracksController(
 
     const tracks = await getTopTracks(req.spotifyToken, limit, time_range).catch((err) => {
         req.log.error(err);
-        throw new BadGateway('Failed to fetch data from Spotify');
+        throw new BadGateway('Falha ao buscar dados do Spotify');
     });
 
     return reply.send({ tracks });
@@ -39,7 +39,7 @@ export async function topArtistsController(
 
     const artists = await getEnrichedTopArtists(req.spotifyToken, limit, time_range).catch((err) => {
         req.log.error(err);
-        throw new BadGateway('Failed to fetch data from Spotify');
+        throw new BadGateway('Falha ao buscar dados do Spotify');
     });
 
     return reply.send({ artists });
@@ -56,7 +56,7 @@ export async function profileController(
     
     const profile = await getSpotifyProfile(req.spotifyToken).catch((err) => {
         req.log.error(err);
-        throw new BadGateway('Failed to fetch profile from Spotify');
+        throw new BadGateway('Falha ao buscar perfil do Spotify');
     });
 
     return reply.send({

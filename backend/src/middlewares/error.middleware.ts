@@ -8,7 +8,7 @@ export function errorHandler(error: FastifyError | Error, req: FastifyRequest, r
     }
 
     if ((error as FastifyError).validation) {
-        return reply.status(400).send({ error: "Validation Error", status: 400, details: (error as FastifyError).validation });
+        return reply.status(400).send({ error: "Erro de validação", status: 400, details: (error as FastifyError).validation });
     }
 
     if ((error as FastifyError).statusCode) {

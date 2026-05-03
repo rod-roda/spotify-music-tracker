@@ -9,11 +9,11 @@ export async function requireSpotifyAuth(
     const cookie = req.unsignCookie(req.cookies.user_id ?? '');
 
     if (!cookie.valid || !cookie.value) {
-        throw new DefaultError('Missing session. Please login first.', 401);
+        throw new DefaultError('Sessão não encontrada. Por favor, faça login primeiro.', 401);
     }
 
     const accessToken = await getValidAccessToken(cookie.value).catch(() => {
-        throw new DefaultError('Session expired. Please login again.', 401);
+        throw new DefaultError('Sessão expirada. Por favor, faça login novamente.', 401);
     });
 
     req.userId = cookie.value;

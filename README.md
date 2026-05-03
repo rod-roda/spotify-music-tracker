@@ -668,8 +668,6 @@ model User {
 
 ## TODO
 
-- [ ] Add unit tests (crypto, popularity, CSRF, services, middleware)
-- [ ] Review and improve backend error handling
-- [ ] Review and improve frontend error display for end users
+- [X] Add unit tests (crypto, popularity, CSRF, services, middleware)
+- [X] Review and improve frontend error display for end users
 - [ ] Submit Spotify quota extension request (video demo required) to make login available to all users beyond development mode
-- [ ] Add an interactive color gradient to the background

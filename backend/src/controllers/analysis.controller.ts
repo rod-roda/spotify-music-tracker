@@ -28,7 +28,7 @@ export async function analysisController(
         getEnrichedTopArtists(req.spotifyToken, 15),
     ]).catch((err) => {
         req.log.error(err);
-        throw new BadGateway("Failed to fetch data from Spotify");
+        throw new BadGateway("Falha ao buscar dados do Spotify");
     });
 
     const userData = {
@@ -45,7 +45,7 @@ export async function analysisController(
 
     const analysis = await analyzeMusicalProfile(userData).catch((err) => {
         req.log.error(err);
-        throw new BadGateway("Failed to generate musical analysis");
+        throw new BadGateway("Falha ao gerar análise musical");
     });
 
     await redis.set(cacheKey, JSON.stringify(analysis), "EX", ANALYSIS_TTL);

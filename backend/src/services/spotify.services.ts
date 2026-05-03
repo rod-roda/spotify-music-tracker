@@ -31,7 +31,7 @@ async function spotifyApiRequest<T>(
             throw error;
         }
     }
-    throw new Error('Max retries exceeded');
+    throw new Error('Número máximo de tentativas excedido');
 }
 
 export async function exchangeCode(code: string): Promise<SpotifyTokenResponse>

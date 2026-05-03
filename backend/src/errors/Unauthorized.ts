@@ -1,7 +1,7 @@
 import DefaultError from "./DefaultError";
 
 export default class Unauthorized extends DefaultError {
-    constructor(message = 'Missing authentication context') {
+    constructor(message = 'Contexto de autenticação ausente') {
         super(message, 401);
     }
 }

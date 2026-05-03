@@ -47,7 +47,7 @@ export async function getEnrichedTopArtists(accessToken: string, limit: number =
         .map(r => r.value);
 
     if (results.length === 0 && spotifyArtists.length > 0) {
-        throw new BadGateway('Failed to enrich artist data from Last.fm');
+        throw new BadGateway('Falha ao enriquecer dados do artista via Last.fm');
     }
 
     return results;

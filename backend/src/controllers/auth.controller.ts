@@ -26,27 +26,27 @@ export async function callbackController(
     const { code, error, state } = req.query as CallbackQuery;
 
     if(error || !code) {
-        throw new BadRequest('Auth denied or missing code');
+        throw new BadRequest('Autorização negada ou código ausente');
     }
 
     const isValid = await consumeCSRFState(state);
     if (!isValid) {
-        throw new DefaultError('Invalid state (CSRF protection)', 403);
+        throw new DefaultError('Estado inválido (proteção CSRF)', 403);
     }
 
     const tokens = await exchangeCode(code).catch((err) => {
         req.log.error(err);
-        throw new DefaultError('Authentication failed. Please try again.');
+        throw new DefaultError('Falha na autenticação. Tente novamente.');
     });
 
     const profile = await getSpotifyProfile(tokens.access_token).catch((err) => {
         req.log.error(err);
-        throw new DefaultError('Failed to fetch Spotify profile.');
+        throw new DefaultError('Falha ao buscar perfil do Spotify.');
     });
 
     const user = await upsertUser(profile, tokens).catch((err) => {
         req.log.error(err);
-        throw new DefaultError('Failed to save user session.');
+        throw new DefaultError('Falha ao salvar sessão do usuário.');
     });
 
     const token = await saveAuthToken(user.id);
@@ -63,7 +63,7 @@ export async function sessionController(
     const userId = await consumeAuthToken(token);
 
     if (!userId) {
-        throw new DefaultError('Invalid or expired token', 401);
+        throw new DefaultError('Token inválido ou expirado', 401);
     }
 
     reply.setCookie('user_id', userId, {
